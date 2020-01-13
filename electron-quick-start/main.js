@@ -13,7 +13,7 @@ app.on('ready', ()=>{
   // 开启调试
   mainWindow.webContents.openDevTools();
 
-  ipcMain.on('message', (event,arg)=>{
+  ipcMain.on('message', (event,arg)=> {
     console.log(arg);
     // 主进程给 渲染进程发送信息
     event.reply('reply', 'hello form main process');
