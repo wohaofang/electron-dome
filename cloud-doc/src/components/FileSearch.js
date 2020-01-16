@@ -8,34 +8,35 @@ import useKeyPress from '../hooks/useKeyPress';
 const FileSearch = ({ title, onFileSearch }) => {
     const [ inputActive, setInpitActive ] = useState(false);
     const [ value, setValue ] = useState('');
-    const enterPressed = useKeyPress(13)
+    const enterPressed = (13)
     const escPressed = useKeyPress(27)
-
     let node = useRef(null)
     const closeSearch = () => {
         setInpitActive(false);
         setValue('');
+        onFileSearch(false)
     }
 
     useEffect(()=>{
-        if(enterPressed && inputActive){
-            onFileSearch(value)
-        }
-        if(escPressed && inputActive){
-            closeSearch()
-        }
-        // const handleInputEvent = (event) => {
-        //     const { keyCode } = event;
-        //     if (keyCode === 13 && inputActive) {
-        //         onFileSearch(value)
-        //     } else if (keyCode === 27 && inputActive) {
-        //         closeSearch(event)
-        //     }
+        // console.log('enterPressed',enterPressed,inputActive)
+        // if(enterPressed && inputActive){
+        //     onFileSearch(value)
         // }
-        // document.addEventListener('keyup', handleInputEvent);
-        // return () => {
-        //     document.removeEventListener('keyup', handleInputEvent)
+        // if(escPressed && inputActive){
+        //     closeSearch()
         // }
+        const handleInputEvent = (event) => {
+            const { keyCode } = event;
+            if (keyCode === 13 && inputActive) {
+                onFileSearch(value)
+            } else if (keyCode === 27 && inputActive) {
+                closeSearch()
+            }
+        }
+        document.addEventListener('keyup', handleInputEvent);
+        return () => {
+            document.removeEventListener('keyup', handleInputEvent)
+        }
     })
     useEffect(()=>{
         if(inputActive){

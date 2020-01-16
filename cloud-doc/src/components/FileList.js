@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faMarkdown } from '@fortawesome/free-brands-svg-icons'
@@ -11,20 +11,28 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete }) => {
     const enterPressed = useKeyPress(13)
     const escPressed = useKeyPress(27)
 
-    const closeSearch = () =>{
+    let node = useRef(null)
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    let closeSearch = (editItem)=>{
         setEditStates(false);
         setValue('');
+        // 如果有 editItem 需要删除掉这个 editItem
+        if(editItem.isNew){
+            onFileDelete(editItem.id)
+        }
     }
 
     useEffect(()=>{
-        if(enterPressed && editStates){
-            const editItem = files.find(file=>file.id === editStates)
+        const editItem = files.find(file=>file.id === editStates)
+        if(enterPressed && editStates && value.trim()!==''){
             onSaveEdit(editItem.id, value)
             setEditStates(false)
             setValue('')
         }
         if(escPressed && editStates){
-            closeSearch()
+            closeSearch(editItem)
         }
         // const handleInputEvent = (event) => {
         //     const { keyCode } = event;
@@ -41,17 +49,30 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete }) => {
         // return () => {
         //     document.removeEventListener('keyup', handleInputEvent)
         // }
-    }, [editStates, enterPressed, escPressed, files, onSaveEdit, value])
+    }, [closeSearch, editStates, enterPressed, escPressed, files, onSaveEdit, value])
+    useEffect(()=>{
+        const newFile = files.find(file => file.isNew);
+        console.log(newFile);
+        if(newFile) {
+           setEditStates(newFile.id);
+           setValue(newFile.title); 
+        }
+    },[files]);
+    useEffect(()=>{
+        if(editStates){
+            node.current.focus()
+        }
+    })
 
     return (
         <ul className="list-group list-group-flush file-list">
             {
                 files.map(file=>(
                     <li
-                        className="list-group-item bg-light row d-flex align-items-center file-item"
+                        className="list-group-item bg-light row d-flex align-items-center file-item mx-0"
                         key={file.id}
                     >
-                    {   (file.id !== editStates) &&
+                    {   (file.id !== editStates && !file.isNew) &&
                         <>
                             <span className="col-2">
                                 <FontAwesomeIcon
@@ -60,7 +81,7 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete }) => {
                                 />
                             </span>
                             <span 
-                                className="col-7 c-link"
+                                className="col-6 c-link"
                                 onClick= {()=>{onFileClick(file.id)}}
                                 >
                                 {file.title}
@@ -69,7 +90,7 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete }) => {
 
                             <button
                                 type="button"
-                                className="icon-button col-1"
+                                className="icon-button col-2"
                                 onClick={() => {setEditStates(file.id); setValue(file.title)}}
                                 >
                                 <FontAwesomeIcon
@@ -81,7 +102,7 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete }) => {
 
                             <button
                                 type="button"
-                                className="icon-button col-1"
+                                className="icon-button col-2"
                                 onClick={() => {onFileDelete(file.id)}}
                                 >
                                 <FontAwesomeIcon
@@ -92,17 +113,19 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete }) => {
                             </button>
                         </>
                     }
-                    { (file.id === editStates) && 
+                    { ((file.id === editStates) || file.isNew) && 
                         <>
                             <input 
                                 className="form-control col-10"
                                 value = {value}
+                                ref={node}
+                                placeholder=" 请输入文件名称"
                                 onChange={(e)=>{setValue(e.target.value)}}
                             />
                             <button
                                 type='button col-2'
                                 className="icon-button"
-                                onClick={closeSearch}
+                                onClick={()=>{closeSearch(file);}}
                             >
                                 <FontAwesomeIcon
                                     size='lg'

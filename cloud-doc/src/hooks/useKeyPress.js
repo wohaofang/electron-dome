@@ -9,18 +9,19 @@ const useKeyPress = (targetKeyCode) => {
     }
   }
   const keyUpHandler = ({ keyCode }) => {
+    console.log(keyCode,targetKeyCode)
     if(keyCode === targetKeyCode) {
       setKeyPressed(false)
     }
   }
   useEffect(() => {
-    document.addEventListener('keydown', keyDownHandler)
     document.addEventListener('keyup', keyUpHandler)
+    document.addEventListener('keydown', keyDownHandler)
     return () => {
-      document.removeEventListener('keydown', keyDownHandler)
       document.removeEventListener('keyup', keyUpHandler)     
+      document.removeEventListener('keydown', keyDownHandler)
     }
-  },[keyDownHandler, keyUpHandler])
+  })
   return keyPressed
 }
 
