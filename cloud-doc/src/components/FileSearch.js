@@ -2,14 +2,14 @@ import React, {useState, useEffect, useRef} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types';
-import useKeyPress from '../hooks/useKeyPress';
+// import useKeyPress from '../hooks/useKeyPress';
 
 
 const FileSearch = ({ title, onFileSearch }) => {
     const [ inputActive, setInpitActive ] = useState(false);
     const [ value, setValue ] = useState('');
-    const enterPressed = (13)
-    const escPressed = useKeyPress(27)
+    // const enterPressed = (13)
+    // const escPressed = useKeyPress(27)
     let node = useRef(null)
     const closeSearch = () => {
         setInpitActive(false);
