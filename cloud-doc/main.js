@@ -10,7 +10,7 @@ app.on('ready', ()=>{
             nodeIntegration: true
         }
     })
-    console.log(mainWindow)
+    // console.log(mainWindow)
     const urlLocation = isDev ? 'http://localhost:3000' : 'dummyurl';
     mainWindow.loadURL(urlLocation)
 });
